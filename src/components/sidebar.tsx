@@ -5,7 +5,7 @@ import { InboxOutlined } from '@ant-design/icons'
 import { useJsApiLoader } from '@react-google-maps/api'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { GOOGLE_MAPS_KEY } from '../utils/config'
-import useToken from '../hooks/useToken'
+import { useAuth } from '../contexts/useAuth'
 import { useNavigate } from 'react-router-dom'
 
 const { Dragger } = Upload
@@ -13,8 +13,8 @@ const { Dragger } = Upload
 const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
     const [value, setValue] = useState<any>()
     const [type, setType] = useState('maps')
+    const { logout } = useAuth()
     const navigate = useNavigate()
-    const { removeToken } = useToken()
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: GOOGLE_MAPS_KEY,
         version: 'weekly',
@@ -49,9 +49,9 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
         },
     }
 
-    const logout = () => {
-        removeToken()
-        navigate('/')
+    const onLogout = () => {
+        logout()
+        navigate('/login')
     }
 
     useEffect(() => {
@@ -67,7 +67,7 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
                 </p>
                 <p className="ant-upload-text">Click or drag file to upload</p>
                 <p className="ant-upload-hint">
-                    In order to upload your PDF you have to drag your file here
+                    In order to upload your image you have to drag your file here
                 </p>
             </Dragger>
         )
@@ -87,7 +87,10 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
             }}
         >
             <div>
-                <Avatar size={164} src="https://joeschmoe.io/api/v1/128" />
+                <Avatar
+                    size={164}
+                    src="https://api.dicebear.com/6.x/personas/svg?seed=Shadow"
+                />
             </div>
             <div
                 style={{
@@ -152,7 +155,7 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
                                 />{' '}
                                 search
                             </Radio>
-                            <Radio value={'pdfs'}>Upload PDF</Radio>
+                            <Radio value={'pdfs'}>Upload Sattelite Image</Radio>
                         </Space>
                     </Radio.Group>
                 </div>
@@ -164,7 +167,7 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
             </div>
             <div style={{ width: '100%' }}>
                 <Button
-                    onClick={() => logout()}
+                    onClick={() => onLogout()}
                     style={{ width: '100%' }}
                     type="primary"
                 >

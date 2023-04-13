@@ -1,11 +1,9 @@
 import { message, Statistic, Input, Slider, Collapse, Tabs, Col, InputNumber, Select } from 'antd'
 import { useEffect, useState } from 'react'
 import { SettingOutlined } from '@ant-design/icons'
-// import { getPanels } from '../services/panels'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
-import { getPanels } from '../services/panels';
 
 // import * as INVERTORS from '../invertors'
 const { Panel } = Collapse;
@@ -199,12 +197,12 @@ const Statistics = () => {
     }
 
     const handleGetPanels = async () => {
-        const panels = await getPanels()
-        if (!panels) {
-            return message.error("We are not able to receive panels")
-        }
+        // const panels = await getPanels()
+        // if (!panels) {
+        //     return message.error("We are not able to receive panels")
+        // }
 
-        setPanels(panels)
+        // setPanels(panels)
     }
 
     const computeCarbonFootprint = (energyGeneration: EnergyGeneration, carsOrTrees?: 'cars' | 'trees') => {

@@ -2,40 +2,46 @@ import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined'
 import { Button, Col } from 'antd'
 import Input from 'antd/lib/input/Input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
 import '../styles/homepage.scss'
 
-export type LoginInfo<T> = {
+export type RegInfo<T> = {
     email: T
+    username: T
     password: T
 }
 
-const Home = () => {
+const SignupPage = () => {
     const navigate = useNavigate()
-    const { login } = useAuth()
+    const { signUp } = useAuth()
 
-    const [loginInfo, setLoginInfo] = useState<LoginInfo<string>>({
+    const [regInfo, setRegInfo] = useState<RegInfo<string>>({
         email: '',
+        username: '',
         password: '',
     })
 
     const onChangeEmail = (val: string) => {
-        setLoginInfo({ ...loginInfo!, email: val })
+        setRegInfo({ ...regInfo!, email: val })
+    }
+
+    const onChangeUsername = (val: string) => {
+        setRegInfo({ ...regInfo!, username: val })
     }
 
     const onChangePassword = (val: string) => {
-        setLoginInfo({ ...loginInfo!, password: val })
+        setRegInfo({ ...regInfo!, password: val })
     }
 
-    const onLogin = () => {
-        login(loginInfo)
-        navigate('/home')
+    const onSignup = () => {
+        signUp(regInfo)
+        navigate('/login')
     }
 
-    const noAccount = async () => {
-        navigate('/signup')
+    const alreadyRegistered = async () => {
+        navigate('/login')
     }
 
     return (
@@ -60,7 +66,14 @@ const Home = () => {
                         />
                         <Input
                             size="large"
+                            placeholder="username"
+                            prefix={<EditOutlined />}
+                            onChange={(e) => onChangeUsername(e.target.value)}
+                        />
+                        <Input
+                            size="large"
                             placeholder="password"
+                            type="password"
                             prefix={<EditOutlined />}
                             onChange={(e) => onChangePassword(e.target.value)}
                         />
@@ -68,20 +81,20 @@ const Home = () => {
                             type="text"
                             htmlType="submit"
                             className="button"
-                            onClick={() => noAccount()}
+                            onClick={() => alreadyRegistered()}
                         >
                             {' '}
-                            No account? Click here to sign up!
+                            Already have an account? Go to the login page!
                         </Button>
                         <div key={'a'}>
                             <Button
                                 type="primary"
                                 htmlType="submit"
                                 className="login-form-button button"
-                                onClick={() => onLogin()}
+                                onClick={() => onSignup()}
                             >
                                 {' '}
-                                Sign in
+                                Sign up
                             </Button>
                         </div>
                     </div>
@@ -96,4 +109,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default SignupPage

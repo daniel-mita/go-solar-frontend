@@ -5,7 +5,7 @@ import axios from '../utils/axios'
 const responseBody = (response: AxiosResponse) => response.data
 
 export const signupUser = async (payload: User): Promise<any> => {
-    const response = await axios.post('/user/signup', {})
+    const response = await axios.post('/user/signup', { ...payload })
     return responseBody(response)
 }
 
