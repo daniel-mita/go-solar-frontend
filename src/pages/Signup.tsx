@@ -35,9 +35,11 @@ const SignupPage = () => {
         setRegInfo({ ...regInfo!, password: val })
     }
 
-    const onSignup = () => {
-        signUp(regInfo)
-        navigate('/login')
+    const onSignup = async () => {
+        const result = await signUp(regInfo)
+        if (result) {
+            navigate('/login')
+        }
     }
 
     const alreadyRegistered = async () => {

@@ -1,18 +1,37 @@
-import { Input, Avatar, Radio, Button, Space, Upload, message } from 'antd'
-import { useState, useMemo, useEffect } from 'react'
+import {
+    Input,
+    Avatar,
+    Radio,
+    Button,
+    Space,
+    Upload,
+    message,
+    UploadFile,
+    Modal,
+} from 'antd'
+import { useState, useMemo, useEffect, useContext } from 'react'
 import type { UploadProps } from 'antd'
-import { InboxOutlined } from '@ant-design/icons'
+import { UploadOutlined } from '@ant-design/icons'
 import { useJsApiLoader } from '@react-google-maps/api'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { GOOGLE_MAPS_KEY } from '../utils/config'
 import { useAuth } from '../contexts/useAuth'
 import { useNavigate } from 'react-router-dom'
+import { saveImage, uploadImage } from '../api/image'
+import { toBase64 } from '../utils/helpers'
+import { LoadingContext } from '../contexts/useLoadingImages'
+import { spawnToast } from '../utils/errors/Toast'
 
-const { Dragger } = Upload
-
-const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
+const Sidebar = ({
+    onLocationChange,
+    type,
+    setType,
+}: {
+    onLocationChange: any
+    type: string
+    setType: any
+}) => {
     const [value, setValue] = useState<any>()
-    const [type, setType] = useState('maps')
     const { logout } = useAuth()
     const navigate = useNavigate()
     const { isLoaded } = useJsApiLoader({
@@ -21,32 +40,69 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
         libraries: ['drawing', 'places'],
     })
 
-    // const { data: session } = useSession();
+    const [uploadedFile, setUploadedFile] = useState<File | undefined>(
+        undefined
+    )
+    const [uploading, setUploading] = useState(false)
+    const [open, setOpen] = useState(false)
+    const [finishedImage, setFinishedImage] = useState<string | undefined>()
+    const { refetchImages, setRefetchImages } = useContext(LoadingContext)
 
-    // useEffect(() => {
-    //     if (!session) {
-    //       router.push("/");
-    //     }
-    //   }, [session]);
+    const handleUpload = async () => {
+        try {
+            setUploading(true)
+            const base64File = await toBase64(uploadedFile)
+            const result = await uploadImage(base64File)
+            if (result) {
+                setFinishedImage(result.image)
+                setOpen(true)
+            }
+        } catch (e: any) {
+            if(e.request.status === 401){
+              spawnToast("Unauthorized", "You are not logged in. Please login", false)
+              logout()
+            }
+        } finally {
+            setUploadedFile(undefined)
+            setUploading(false)
+        }
+    }
 
     const props: UploadProps = {
         name: 'file',
         multiple: false,
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        onChange(info) {
-            const { status } = info.file
-            if (status !== 'uploading') {
-                console.log(info.file, info.fileList)
-            }
-            if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`)
-            } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`)
-            }
+        accept: 'image/*',
+        listType: 'picture',
+        onRemove: (file) => {
+            setUploadedFile(undefined)
         },
-        onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files)
+        beforeUpload: (rcFile) => {
+            if (uploadedFile) {
+                return false
+            }
+            const parsedfile = new File([rcFile], rcFile.name, {
+                type: rcFile.type,
+            })
+            setUploadedFile(parsedfile)
+            return false
         },
+    }
+
+    const handleCancel = () => {
+        setOpen(false)
+    }
+
+    const handleSave = async () => {
+        try {
+            const result = await saveImage(finishedImage)
+            setRefetchImages(!refetchImages)
+            setOpen(false)
+        } catch (e: any) {
+          if(e.request.status === 401){
+            spawnToast("Unauthorized", "You are not logged in. Please login", false)
+            logout()
+          }
+        }
     }
 
     const onLogout = () => {
@@ -59,19 +115,49 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
         onLocationChange(value.value.place_id)
     }, [value])
 
-    const renderUploadPDF = useMemo(() => {
+    const renderModal = () => {
         return (
-            <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">Click or drag file to upload</p>
-                <p className="ant-upload-hint">
-                    In order to upload your image you have to drag your file here
-                </p>
-            </Dragger>
+            <Modal
+                open={open}
+                style={{display: 'flex', justifyContent: 'center', padding: 30}}
+                onOk={() => setOpen(false)}
+                onCancel={handleCancel}
+                footer={[
+                    <Button key="back" onClick={handleCancel}>
+                        Return
+                    </Button>,
+                    <Button
+                        key="submit"
+                        type="primary"
+                        onClick={handleSave}
+                    >
+                        Save
+                    </Button>,
+                ]}
+            >
+                <img src={'data:image/jpeg;base64,' + finishedImage} />
+            </Modal>
         )
-    }, [])
+    }
+
+    const renderUploadImage = () => {
+        return (
+            <>
+                <Upload {...props}>
+                    <Button icon={<UploadOutlined />}>Select File</Button>
+                </Upload>
+                <Button
+                    type="primary"
+                    onClick={handleUpload}
+                    disabled={uploadedFile === undefined}
+                    loading={uploading}
+                    style={{ marginTop: 16 }}
+                >
+                    {uploading ? 'Uploading' : 'Start Upload'}
+                </Button>
+            </>
+        )
+    }
 
     return (
         <div
@@ -89,7 +175,7 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
             <div>
                 <Avatar
                     size={164}
-                    src="https://api.dicebear.com/6.x/personas/svg?seed=Shadow"
+                    src={`https://api.dicebear.com/6.x/personas/svg?seed=${localStorage.getItem('avatar_seed')}`}
                 />
             </div>
             <div
@@ -121,7 +207,7 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
                             letterSpacing: 2,
                         }}
                     >
-                        Daniel
+                        {localStorage.getItem("username")}
                     </p>
                 </div>
                 <div style={{ width: '100%' }}>
@@ -161,9 +247,10 @@ const Sidebar = ({ onLocationChange }: { onLocationChange: any }) => {
                 </div>
                 {type === 'pdfs' && (
                     <div style={{ paddingTop: 24, width: '100%' }}>
-                        {renderUploadPDF}
+                        {renderUploadImage()}
                     </div>
                 )}
+                {renderModal()}
             </div>
             <div style={{ width: '100%' }}>
                 <Button

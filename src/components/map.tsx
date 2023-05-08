@@ -4,6 +4,8 @@ import { GOOGLE_MAPS_KEY } from '../utils/config'
 import usePlacesService from 'react-google-autocomplete/lib/usePlacesAutocompleteService'
 import { message } from 'antd'
 
+const libraries = ['drawing', 'places']
+
 function Map({ location, reset, setDrawing, setDisableSave }: { location: string | undefined, reset: boolean, setDrawing: React.Dispatch<React.SetStateAction<any>>, setDisableSave: React.Dispatch<React.SetStateAction<boolean>> }) {
 	const googlemap = useRef(null)
 	const [userPosition, setUserPosition] = useState<{ lat: number; lng: number }>()
@@ -11,7 +13,7 @@ function Map({ location, reset, setDrawing, setDisableSave }: { location: string
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: GOOGLE_MAPS_KEY,
 		version: 'weekly',
-		libraries: ['drawing', 'places']
+		libraries: libraries as any
 	})
 
 	const { placesService, placePredictions, getPlacePredictions, isPlacePredictionsLoading } = usePlacesService({
