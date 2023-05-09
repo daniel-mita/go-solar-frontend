@@ -8,6 +8,7 @@ export type Configurations = {
     reservedSpace: string
     rooftopType: string
     angle: number
+    kwPrice: number
 }
 
 export type Coordinates = Array<SinglePoint>

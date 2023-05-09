@@ -49,18 +49,21 @@ const Home = () => {
                             marginBottom: 20,
                         }}
                     >
-                        <img src="/logo.png" width="200px" height="150px" />
+                        <img src="/logo.png" width="200px" height="200px" />
                     </div>
                     <div>
                         <Input
                             size="large"
+                            className="input"
                             placeholder="email"
                             prefix={<UserOutlined />}
                             onChange={(e) => onChangeEmail(e.target.value)}
                         />
                         <Input
                             size="large"
+                            className="input"
                             placeholder="password"
+                            type="password"
                             prefix={<EditOutlined />}
                             onChange={(e) => onChangePassword(e.target.value)}
                         />

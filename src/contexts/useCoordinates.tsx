@@ -11,6 +11,8 @@ import { Coordinates } from '../models/Coordinates'
 type CoordinatesState = {
     isFirstTime: boolean
     setIsFirstTime: Dispatch<SetStateAction<boolean>>
+    allParams: boolean
+    setAllParams: Dispatch<SetStateAction<boolean>>
     coordinates: Coordinates
     setCoordinates: Dispatch<SetStateAction<Coordinates>>
     loading: boolean
@@ -20,6 +22,8 @@ type CoordinatesState = {
 const contextDefaultValues: CoordinatesState = {
     isFirstTime: true,
     setIsFirstTime: async () => undefined,
+    allParams: false,
+    setAllParams: async () => undefined,
     coordinates: [],
     setCoordinates: async () => undefined,
     loading: false,
@@ -32,12 +36,15 @@ const CoordinatesProvider = ({ children }: { children: ReactNode }) => {
     const [coordinates, setCoordinates] = useState<Coordinates>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [isFirstTime, setIsFirstTime] = useState<boolean>(true)
+    const [allParams, setAllParams] = useState<boolean>(false)
 
     return (
         <CoordinatesContext.Provider
             value={{
                 isFirstTime,
                 setIsFirstTime,
+                allParams,
+                setAllParams,
                 coordinates,
                 setCoordinates,
                 loading,

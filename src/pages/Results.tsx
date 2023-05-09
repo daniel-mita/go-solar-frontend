@@ -93,7 +93,7 @@ const { Title, Paragraph } = Typography
 
 const ResultsPage = () => {
 
-    const { loading, setLoading, isFirstTime, setIsFirstTime } = useContext(CoordinatesContext)
+    const { loading, setLoading, isFirstTime, setIsFirstTime, setAllParams, allParams } = useContext(CoordinatesContext)
 
     const [anualCons, setAnualCons] = useState('0')
     const [reservedSpace, setReservedSpace] = useState('0')
@@ -101,10 +101,8 @@ const ResultsPage = () => {
     const [kwhPrice, setKwhPrice] = useState(157)
 
     useEffect(() => {
-
-      if(anualCons !== '0' && kwhPrice > 0) {
-      }
-    }, [anualCons,reservedSpace, averageSunDay, kwhPrice ])
+      setAllParams(anualCons !== '0' && kwhPrice > 0)
+    }, [anualCons, kwhPrice])
 
     const [rooftopType, setRooftopType] = useState('plain')
     const [angle, setAngle] = useState(0)
@@ -171,16 +169,9 @@ const ResultsPage = () => {
 
 
     useEffect(() => {
-        // handleGetPanels()
         const areaStorage = localStorage.getItem('area')
         setArea(Number(areaStorage))
     }, [])
-
-    useEffect(() => {
-        if (area > 0) {
-            // computePanelsData()
-        }
-    }, [area, anualCons, reservedSpace, activeTab, averageSunDay, kwhPrice])
 
 
     const computeCarbonFootprint = (energyGeneration: EnergyGeneration, carsOrTrees?: 'cars' | 'trees') => {
@@ -283,7 +274,8 @@ const ResultsPage = () => {
           annualConsumption: anualCons,
           reservedSpace: reservedSpace,
           rooftopType: rooftopType,
-          angle: angle
+          angle: angle,
+          kwPrice: kwhPrice
         }
         try {
           setLoading(true)
@@ -369,7 +361,7 @@ const ResultsPage = () => {
                             <div style={{ paddingBottom: 6, fontWeight: 200 }}>
                                 <span>Anual Consumption (KWh)</span>
                             </div>
-                            <Input type="number" value={anualCons} onChange={e => setAnualCons(e.target.value)} style={{ minWidth: 270 }} placeholder="Type your anual consumption ..." />
+                            <Input type="number" status={anualCons === '0' || "" ? "error" : ""} value={anualCons} onChange={e => setAnualCons(e.target.value)} style={{ minWidth: 270 }} placeholder="Type your anual consumption ..."  />
                         </div>
                         <div style={{ flex: 1, paddingRight: 24 }}>
                             <div style={{ paddingBottom: 6, fontWeight: 200 }}>
@@ -410,7 +402,7 @@ const ResultsPage = () => {
                                         <div style={{ paddingBottom: 6, fontWeight: 200 }}>
                                             <span>KW Price -in lei</span>
                                         </div>
-                                        <Input type="number" min={1} value={kwhPrice} onChange={e => setKwhPrice(Number(e.target.value))} style={{ minWidth: 270 }} placeholder="Type kW Price ..." />
+                                        <Input type="number" status={kwhPrice === 0 ? "error" : ""} min={1} value={kwhPrice} onChange={e => setKwhPrice(Number(e.target.value))} style={{ minWidth: 270 }} placeholder="Type kW Price ..." />
                                     </div>
                                 </div>
                             </Panel>

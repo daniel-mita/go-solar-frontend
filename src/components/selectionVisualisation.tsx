@@ -16,7 +16,7 @@ const SelectionVisualisation = ({
 }: {
     handleCalculations: () => void
 }) => {
-    const { loading, isFirstTime, setIsFirstTime } =
+    const { loading, isFirstTime, setIsFirstTime, allParams } =
         useContext(CoordinatesContext)
 
     const navigate = useNavigate()
@@ -69,7 +69,7 @@ const SelectionVisualisation = ({
                 type="primary"
                 icon={<SettingOutlined />}
                 onClick={handleCalculations}
-                disabled={loading}
+                disabled={loading || !allParams}
             >
                 {loading ? 'Calculating...' : 'Calculate'}
             </Button>
@@ -78,7 +78,7 @@ const SelectionVisualisation = ({
             ) : (
                 <>
                     <Button
-                        type="primary"
+                        type="dashed"
                         style={{
                             marginTop: 20,
                         }}
@@ -87,9 +87,15 @@ const SelectionVisualisation = ({
                     >
                         Go back
                     </Button>
-                    <Typography style={{ marginTop: 60 }}>
+                    <Typography style={{ marginTop: 60, color: 'gray' }}>
                         INFO: Euro prices are calculated live
                     </Typography>
+                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <Typography style={{color: 'gray', marginRight: 10 }}>
+                        Powered by: 
+                    </Typography>
+                    <img src="/logo.png" width="20px" height="20px" />
+                    </div>
                     <div
                         style={{
                             width: '100%',

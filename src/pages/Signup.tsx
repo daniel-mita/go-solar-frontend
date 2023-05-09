@@ -57,10 +57,11 @@ const SignupPage = () => {
                             marginBottom: 20,
                         }}
                     >
-                        <img src="/logo.png" width="200px" height="150px" />
+                        <img src="/logo.png" width="200px" height="200px" />
                     </div>
                     <div>
                         <Input
+                            className="input"
                             size="large"
                             placeholder="email"
                             prefix={<UserOutlined />}
@@ -68,12 +69,14 @@ const SignupPage = () => {
                         />
                         <Input
                             size="large"
+                            className="input"
                             placeholder="username"
                             prefix={<EditOutlined />}
                             onChange={(e) => onChangeUsername(e.target.value)}
                         />
                         <Input
                             size="large"
+                            className="input"
                             placeholder="password"
                             type="password"
                             prefix={<EditOutlined />}
@@ -86,7 +89,7 @@ const SignupPage = () => {
                             onClick={() => alreadyRegistered()}
                         >
                             {' '}
-                            Already have an account? Go to the login page!
+                            Already have an account? Click here!
                         </Button>
                         <div key={'a'}>
                             <Button
