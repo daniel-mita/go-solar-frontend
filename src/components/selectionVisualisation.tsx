@@ -90,6 +90,9 @@ const SelectionVisualisation = ({
                     <Typography style={{ marginTop: 60, color: 'gray' }}>
                         INFO: Euro prices are calculated live
                     </Typography>
+                    <Typography style={{ marginTop: 5, color: 'gray', fontWeight: 'bold' }}>
+                        INFO: The prices and sums don't include batteries!
+                    </Typography>
                     <div style={{display: 'flex', flexDirection: 'row'}}>
                     <Typography style={{color: 'gray', marginRight: 10 }}>
                         Powered by: 

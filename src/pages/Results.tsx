@@ -98,11 +98,11 @@ const ResultsPage = () => {
     const [anualCons, setAnualCons] = useState('0')
     const [reservedSpace, setReservedSpace] = useState('0')
     const [averageSunDay, setAverageSunDay] = useState(3)
-    const [kwhPrice, setKwhPrice] = useState(157)
+    const [kWPrice, setKWPrice] = useState(1.97)
 
     useEffect(() => {
-      setAllParams(anualCons !== '0' && kwhPrice > 0)
-    }, [anualCons, kwhPrice])
+      setAllParams(anualCons !== '0' && kWPrice > 0)
+    }, [anualCons, kWPrice])
 
     const [rooftopType, setRooftopType] = useState('plain')
     const [angle, setAngle] = useState(0)
@@ -275,7 +275,7 @@ const ResultsPage = () => {
           reservedSpace: reservedSpace,
           rooftopType: rooftopType,
           angle: angle,
-          kwPrice: kwhPrice
+          kWPrice: kWPrice
         }
         try {
           setLoading(true)
@@ -283,16 +283,20 @@ const ResultsPage = () => {
         setIsFirstTime(false)
         console.log(results)
         setPanelNumber(results.maximum.panelsNumber)
-        setCosts(results.maximum.panelsCost)
-        setGenerated(results.maximum.generatedMoney)
-        setRecover(results.maximum.recoverPeriod)
-        setProduced(results.maximum.consumedElectricity)
         setInstalledPower(results.maximum.installedPower)
-        // setYearlyGen(results.maximum.)
-        // setDeltaEuro(results.maximum.consumedMoney)
-        // setDeltaKW()
+        setCosts(results.maximum.panelsCost)
+        setRecover(results.maximum.recoverPeriod)
+
+        setProduced(results.maximum.generatedElectricity)
+
+        setGenerated(results.maximum.generatedMoney)
+        setYearlyGen(results.maximum.generatedElectricity)
+        setDeltaEuro(results.maximum.consumedMoney)
+        setDeltaKW(results.maximum.consumedElectricity)
+
         setInvertor(results.aditionalCosts.invertor)
         setInstalation(results.aditionalCosts.installation)
+
         setLoading(false)
         }catch(e: any){
           if(e.request.status === 401){
@@ -392,17 +396,11 @@ const ResultsPage = () => {
                         <Collapse onChange={() => { }}>
                             <Panel header="Parameters Configuration" key="1">
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: 12 }}>
-                                        <div style={{ paddingBottom: 6, fontWeight: 200 }}>
-                                            <span>Average Sun / Day</span>
-                                        </div>
-                                        <Input type="number" value={averageSunDay} onChange={e => setAverageSunDay(Number(e.target.value))} style={{ minWidth: 270 }} placeholder="Type average sun day ..." />
-                                    </div>
                                     <div style={{ flex: 1, flexDirection: 'column', display: 'flex' }}>
                                         <div style={{ paddingBottom: 6, fontWeight: 200 }}>
                                             <span>KW Price -in lei</span>
                                         </div>
-                                        <Input type="number" status={kwhPrice === 0 ? "error" : ""} min={1} value={kwhPrice} onChange={e => setKwhPrice(Number(e.target.value))} style={{ minWidth: 270 }} placeholder="Type kW Price ..." />
+                                        <Input type="number" status={kWPrice === 0 ? "error" : ""} min={1} value={kWPrice} onChange={e => setKWPrice(Number(e.target.value))} style={{ minWidth: 270 }} placeholder="Type kW Price ..." />
                                     </div>
                                 </div>
                             </Panel>
@@ -484,7 +482,7 @@ const ResultsPage = () => {
                         <Statistic title="Panels Number" value={panelNumber} />
                     </div>
                     <div style={{ flex: 1 }}>
-                        <Statistic title="Installed Power" value={`${Math.floor(installedPower).toFixed(2)} kW`} />
+                        <Statistic title="Installed Power" value={`${installedPower} kW`} />
                     </div>
                     <div style={{ flex: 1 }}>
                         <Statistic title="Panels Cost" value={`€ ${costs.toFixed(2)}`} />
@@ -501,7 +499,7 @@ const ResultsPage = () => {
                             <Statistic title="Generated / Year" value={`${yearlyGen.toFixed(2)} kWh`} />
                         </div>
                         <div style={{ flex: 1 }}>
-                            <Statistic title="Produced - Consumed" value={`€ ${deltaEuro.toFixed(2)}`} />
+                            <Statistic title="Produced - Consumed / Amount" value={`€ ${deltaEuro.toFixed(2)}`} />
                         </div>
                         <div style={{ flex: 1 }}>
                             <Statistic title="Produced - Consumed" value={`${deltaKW.toFixed(2)} kWh`} />
@@ -510,10 +508,10 @@ const ResultsPage = () => {
                 </div> :
                     <div style={{ display: 'flex', flexDirection: 'row', paddingTop: 8 }}>
                         <div style={{ flex: 1 }}>
-                            <Statistic title="Invertor" value={`€ ${invertor.toFixed(2)}`} />
+                            <Statistic title="Invertor" value={`€ ${invertor}`} />
                         </div>
                         <div style={{ flex: 1 }}>
-                            <Statistic title="Installation" value={`€ ${instalation.toFixed(2)}`} />
+                            <Statistic title="Installation" value={`€ ${instalation}`} />
                         </div>
                     </div>
                 }
