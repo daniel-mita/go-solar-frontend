@@ -363,7 +363,7 @@ const ResultsPage = () => {
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <div style={{ flex: 1, paddingRight: 24 }}>
                             <div style={{ paddingBottom: 6, fontWeight: 200 }}>
-                                <span>Anual Consumption (KWh)</span>
+                                <span>Annual Consumption (KWh)</span>
                             </div>
                             <Input type="number" status={anualCons === '0' || "" ? "error" : ""} value={anualCons} onChange={e => setAnualCons(e.target.value)} style={{ minWidth: 270 }} placeholder="Type your anual consumption ..."  />
                         </div>
@@ -474,7 +474,7 @@ const ResultsPage = () => {
                 <Tabs defaultActiveKey={activeTab} onChange={handleOnTabChange}>
                     <TabPane tab="Maximum Panels" key="max">
                     </TabPane>
-                    <TabPane tab="Aditional Costs" key="extra">
+                    <TabPane tab="Additional Costs" key="extra">
                     </TabPane>
                 </Tabs>
                 {activeTab !== 'extra' ? <div><div style={{ display: 'flex', flexDirection: 'row', paddingTop: 6 }}>
